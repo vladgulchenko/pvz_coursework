@@ -25,8 +25,7 @@ TestResults/
 .env.*
 !.env.example
 
-# Local coursework handoff and agent working notes
-/AGENTS.md
-/START_HERE_CODEX.md
+# Local documentation and temporary files
+*.md
 /docs/
 /.local/
