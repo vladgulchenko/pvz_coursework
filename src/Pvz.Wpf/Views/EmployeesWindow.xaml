@@ -6,7 +6,7 @@
     <Grid Margin="26" IsEnabled="{Binding IsIdle}">
         <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition/></Grid.RowDefinitions>
         <Grid><TextBlock Text="Сотрудники" FontSize="26" FontWeight="SemiBold"/><Button Content="+ Новый сотрудник" Command="{Binding NewCommand}" HorizontalAlignment="Right"/></Grid>
-        <TextBlock Grid.Row="1" Text="{Binding Message}" Foreground="#A33430" Margin="0,16" AutomationProperties.AutomationId="EmployeesMessage"/>
+        <TextBlock Grid.Row="1" Text="{Binding Message}" Style="{StaticResource Feedback}" Margin="0,16" AutomationProperties.AutomationId="EmployeesMessage"/>
         <Grid Grid.Row="2"><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="20"/><ColumnDefinition Width="320"/></Grid.ColumnDefinitions>
             <DataGrid ItemsSource="{Binding Employees}" SelectedItem="{Binding Selected}" AutomationProperties.AutomationId="EmployeesGrid">
                 <DataGrid.Columns><DataGridTextColumn Header="Имя" Binding="{Binding Name}" Width="*"/><DataGridTextColumn Header="Логин" Binding="{Binding Login}" Width="100"/><DataGridTextColumn Header="Роль" Binding="{Binding RoleText}" Width="130"/><DataGridTextColumn Header="Доступ" Binding="{Binding ActivityText}" Width="95"/></DataGrid.Columns>

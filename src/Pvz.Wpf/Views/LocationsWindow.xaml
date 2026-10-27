@@ -6,7 +6,7 @@
     <Grid Margin="26" IsEnabled="{Binding IsIdle}">
         <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition/></Grid.RowDefinitions>
         <Grid><TextBlock Text="Места хранения" FontSize="26" FontWeight="SemiBold"/><Button Content="+ Новое место" Command="{Binding NewCommand}" HorizontalAlignment="Right"/></Grid>
-        <TextBlock Grid.Row="1" Text="{Binding Message}" Foreground="#A33430" Margin="0,16" AutomationProperties.AutomationId="LocationsMessage"/>
+        <TextBlock Grid.Row="1" Text="{Binding Message}" Style="{StaticResource Feedback}" Margin="0,16" AutomationProperties.AutomationId="LocationsMessage"/>
         <Grid Grid.Row="2"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="20"/><ColumnDefinition Width="290"/></Grid.ColumnDefinitions>
             <DataGrid ItemsSource="{Binding Locations}" SelectedItem="{Binding Selected}" AutomationProperties.AutomationId="LocationsGrid"><DataGrid.Columns><DataGridTextColumn Header="Стеллаж" Binding="{Binding Rack}" Width="*"/><DataGridTextColumn Header="Ячейка" Binding="{Binding Cell}" Width="*"/></DataGrid.Columns></DataGrid>
             <Border Grid.Column="2" Style="{StaticResource Card}"><StackPanel>

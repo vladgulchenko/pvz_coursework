@@ -25,10 +25,11 @@ public sealed class EmployeesViewModel : ScreenViewModel
         SaveCommand = new(parameter => RunAsync(async () =>
         {
             var input = new EmployeeInput(Name, Login, Role.Role, Active);
-            if (Selected is null) await administration.CreateEmployeeAsync(input, parameter as string ?? "");
-            else await administration.UpdateEmployeeAsync(Selected.Id, input);
+            var id = Selected?.Id;
+            if (!id.HasValue) id = await administration.CreateEmployeeAsync(input, parameter as string ?? "");
+            else await administration.UpdateEmployeeAsync(id.Value, input);
             if (session.CurrentUser is null) return;
-            await ReloadAsync();
+            await ReloadAsync(id);
             Message = "Данные сотрудника сохранены.";
         }, ReloadAsync));
         ResetPasswordCommand = new(parameter => RunAsync(async () =>
@@ -67,10 +68,11 @@ public sealed class EmployeesViewModel : ScreenViewModel
 
     public Task InitializeAsync() => RunAsync(ReloadAsync);
 
-    private async Task ReloadAsync()
+    private Task ReloadAsync() => ReloadAsync(Selected?.Id);
+
+    private async Task ReloadAsync(int? id)
     {
         if (session.CurrentUser is null) return;
-        var id = Selected?.Id;
         var rows = await administration.GetEmployeesAsync();
         Employees.Clear();
         foreach (var employee in rows) Employees.Add(employee);

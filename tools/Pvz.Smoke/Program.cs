@@ -149,7 +149,7 @@ internal static class Program
         await locations.InitializeAsync();
         locations.Rack = "A"; locations.Cell = "01";
         await locations.SaveCommand.ExecuteAsync();
-        Check(locations.Locations.Count == 1, "Location VM creates cell");
+        Check(locations.Locations.Count == 1 && locations.Selected is not null, "Location VM creates and selects cell");
         await RenderAsync(locationsWindow, "locations.png");
         locationsWindow.Close();
         var location = (await admin.GetLocationsAsync()).Single();
@@ -160,7 +160,7 @@ internal static class Program
         await employees.InitializeAsync();
         employees.Name = "Демонстрационный оператор"; employees.Login = "demo-operator";
         await employees.SaveCommand.ExecuteAsync(Password);
-        Check(employees.Employees.Count == 2, "Employee VM creates operator");
+        Check(employees.Employees.Count == 2 && employees.Selected is not null, "Employee VM creates and selects operator");
         await RenderAsync(employeesWindow, "employees.png");
         employeesWindow.Close();
 

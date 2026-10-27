@@ -17,8 +17,8 @@ public sealed class LocationsViewModel : ScreenViewModel
         NewCommand = new(() => { Selected = null; Rack = ""; Cell = ""; });
         SaveCommand = new(_ => RunAsync(async () =>
         {
-            await administration.SaveLocationAsync(Selected?.Id, Rack, Cell);
-            await ReloadAsync();
+            var id = await administration.SaveLocationAsync(Selected?.Id, Rack, Cell);
+            await ReloadAsync(id);
             Message = "Место хранения сохранено.";
         }, ReloadAsync));
         DeleteCommand = new(_ => RunAsync(async () =>
@@ -43,9 +43,10 @@ public sealed class LocationsViewModel : ScreenViewModel
     public AsyncCommand DeleteCommand { get; }
     public Task InitializeAsync() => RunAsync(ReloadAsync);
 
-    private async Task ReloadAsync()
+    private Task ReloadAsync() => ReloadAsync(Selected?.Id);
+
+    private async Task ReloadAsync(int? id)
     {
-        var id = Selected?.Id;
         var rows = await administration.GetLocationsAsync();
         Locations.Clear();
         foreach (var location in rows) Locations.Add(location);

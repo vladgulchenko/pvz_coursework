@@ -36,7 +36,7 @@
             </StackPanel>
         </ScrollViewer>
         <StackPanel Grid.Row="2" Margin="0,16,0,0">
-            <TextBlock Text="{Binding Message}" Foreground="#A33430" Margin="0,0,0,10" AutomationProperties.AutomationId="EditorMessage"/>
+            <TextBlock Text="{Binding Message}" Style="{StaticResource Feedback}" Margin="0,0,0,10" AutomationProperties.AutomationId="EditorMessage"/>
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"><Button Content="Отмена" IsCancel="True" Margin="0,0,10,0"/><Button Content="Сохранить заказ" Command="{Binding SaveCommand}" Style="{StaticResource PrimaryButton}" AutomationProperties.AutomationId="SaveOrder"/></StackPanel>
         </StackPanel>
     </Grid>

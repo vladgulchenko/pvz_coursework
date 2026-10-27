@@ -31,7 +31,7 @@
                     <PasswordBox x:Name="PasswordInput" MaxLength="128" AutomationProperties.AutomationId="Password"/>
                     <Button Content="{Binding SubmitText}" Style="{StaticResource PrimaryButton}" Margin="0,25,0,0"
                             Click="Submit" IsEnabled="{Binding Ready}" IsDefault="True" AutomationProperties.AutomationId="SubmitLogin"/>
-                    <TextBlock Text="{Binding Message}" Foreground="#A33430" Margin="0,16,0,0" AutomationProperties.AutomationId="AuthMessage"/>
+                    <TextBlock Text="{Binding Message}" Style="{StaticResource Feedback}" Margin="0,16,0,0" AutomationProperties.AutomationId="AuthMessage"/>
                     <Button Content="Повторить проверку базы" Command="{Binding RetryCommand}" Margin="0,16,0,0"/>
                 </StackPanel>
             </Grid>

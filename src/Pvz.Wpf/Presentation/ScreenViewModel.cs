@@ -7,6 +7,8 @@ public abstract class ScreenViewModel : ObservableObject
 {
     private string message = "";
     private bool isBusy;
+    private bool isError;
+    public bool IsError { get => isError; private set => Set(ref isError, value); }
     public string Message { get => message; protected set => Set(ref message, value); }
     public bool IsBusy { get => isBusy; private set { Set(ref isBusy, value); OnPropertyChanged(nameof(IsIdle)); } }
     public bool IsIdle => !IsBusy;
@@ -16,9 +18,11 @@ public abstract class ScreenViewModel : ObservableObject
         if (IsBusy) return;
         IsBusy = true;
         Message = "";
+        IsError = false;
         try { await operation(); }
         catch (Exception ex)
         {
+            IsError = true;
             Message = FriendlyError(ex);
             if (recover is not null)
             {
