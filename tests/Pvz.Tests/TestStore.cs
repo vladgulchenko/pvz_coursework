@@ -51,6 +51,10 @@ public sealed class TestStore : IAsyncDisposable
 
     public ValueTask DisposeAsync()
     {
+        var expectedParent = Path.GetFullPath(Path.Combine(Path.GetTempPath(), "Pvz.Tests"));
+        if (!string.Equals(Path.GetDirectoryName(Path.GetFullPath(Folder)), expectedParent, StringComparison.OrdinalIgnoreCase)
+            || !Guid.TryParseExact(Path.GetFileName(Folder), "N", out _))
+            throw new InvalidOperationException("Test cleanup path is outside its isolated run directory.");
         Directory.Delete(Folder, recursive: true);
         return ValueTask.CompletedTask;
     }

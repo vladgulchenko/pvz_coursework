@@ -106,5 +106,5 @@
         </Style>
         <DataTemplate DataType="{x:Type vm:AuthViewModel}"><views:AuthView/></DataTemplate>
         <DataTemplate DataType="{x:Type vm:MainViewModel}"><views:MainView/></DataTemplate>
-    
+
 </ResourceDictionary>

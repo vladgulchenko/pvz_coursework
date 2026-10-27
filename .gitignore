@@ -17,6 +17,8 @@ TestResults/
 *.sqlite3-*
 *.db.bak
 *.sqlite.bak
+*.db.backup-*/
+*.sqlite.backup-*/
 
 # Local environment and credentials
 .env
