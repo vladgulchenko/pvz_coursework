@@ -1,0 +1,40 @@
+<UserControl x:Class="Pvz.Wpf.Views.AuthView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Grid>
+        <Grid.ColumnDefinitions><ColumnDefinition Width="5*"/><ColumnDefinition Width="7*"/></Grid.ColumnDefinitions>
+        <Border Background="#183D44" Padding="52">
+            <Grid>
+                <StackPanel VerticalAlignment="Top">
+                    <TextBlock Text="ПВЗ / РАБОЧЕЕ МЕСТО" Foreground="#9FDED0" FontSize="14" FontWeight="SemiBold"/>
+                    <TextBlock Text="Каждый заказ&#x0a;на своём месте." Foreground="White" FontSize="40" FontWeight="SemiBold" Margin="0,76,0,22"/>
+                    <TextBlock Text="Приём, хранение, выдача и возврат заказов в одной системе." Foreground="#C5DCDE" FontSize="18" LineHeight="28"/>
+                </StackPanel>
+                <StackPanel VerticalAlignment="Bottom">
+                    <Border Background="#2A5055" Height="1" Margin="0,0,0,24"/>
+                    <TextBlock Text="Локальная база данных&#x0a;Доступ по учётной записи сотрудника" Foreground="#ABC9CB" FontSize="13" LineHeight="24"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+            <Grid MinHeight="650">
+                <StackPanel Width="390" VerticalAlignment="Center" Margin="32" IsEnabled="{Binding IsIdle}">
+                    <TextBlock Text="{Binding Title}" FontSize="29" FontWeight="SemiBold"/>
+                    <TextBlock Text="{Binding Subtitle}" Foreground="{StaticResource Muted}" Margin="0,12,0,25"/>
+                    <StackPanel Visibility="{Binding NeedsSetup, Converter={StaticResource BoolVisibility}}">
+                        <TextBlock Text="Имя администратора" Style="{StaticResource Label}"/>
+                        <TextBox Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}" MaxLength="120" AutomationProperties.AutomationId="SetupName"/>
+                    </StackPanel>
+                    <TextBlock Text="Логин" Style="{StaticResource Label}"/>
+                    <TextBox Text="{Binding Login, UpdateSourceTrigger=PropertyChanged}" MaxLength="80" AutomationProperties.AutomationId="Login"/>
+                    <TextBlock Text="Пароль" Style="{StaticResource Label}"/>
+                    <PasswordBox x:Name="PasswordInput" MaxLength="128" AutomationProperties.AutomationId="Password"/>
+                    <Button Content="{Binding SubmitText}" Style="{StaticResource PrimaryButton}" Margin="0,25,0,0"
+                            Click="Submit" IsEnabled="{Binding Ready}" IsDefault="True" AutomationProperties.AutomationId="SubmitLogin"/>
+                    <TextBlock Text="{Binding Message}" Foreground="#A33430" Margin="0,16,0,0" AutomationProperties.AutomationId="AuthMessage"/>
+                    <Button Content="Повторить проверку базы" Command="{Binding RetryCommand}" Margin="0,16,0,0"/>
+                </StackPanel>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

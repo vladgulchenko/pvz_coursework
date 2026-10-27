@@ -1,0 +1,42 @@
+<Window x:Class="Pvz.Wpf.Views.OrderEditorWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="{Binding Title}" Width="760" Height="810" MinHeight="650" MinWidth="650"
+        WindowStartupLocation="CenterOwner">
+    <Grid Margin="26" IsEnabled="{Binding IsIdle}">
+        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+        <StackPanel><TextBlock Text="{Binding Title}" FontSize="26" FontWeight="SemiBold"/><TextBlock Text="Время указывается по часовому поясу Windows · дд.мм.гггг чч:мм" Foreground="{StaticResource Muted}" FontSize="12" Margin="0,8,0,16"/></StackPanel>
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel>
+                <Border Style="{StaticResource Card}">
+                    <StackPanel>
+                        <TextBlock Text="Номер заказа" Style="{StaticResource Label}" Margin="0,0,0,5"/>
+                        <TextBox Text="{Binding Number, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsNew}" MaxLength="80" AutomationProperties.AutomationId="OrderNumber"/>
+                        <TextBlock Text="Получатель" Style="{StaticResource Label}"/>
+                        <TextBox Text="{Binding RecipientName, UpdateSourceTrigger=PropertyChanged}" MaxLength="120" AutomationProperties.AutomationId="RecipientName"/>
+                        <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="16"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                            <StackPanel><TextBlock Text="Телефон" Style="{StaticResource Label}"/><TextBox Text="{Binding Phone, UpdateSourceTrigger=PropertyChanged}" MaxLength="40" AutomationProperties.AutomationId="RecipientPhone"/></StackPanel>
+                            <StackPanel Grid.Column="2"><TextBlock Text="Место хранения" Style="{StaticResource Label}"/><ComboBox ItemsSource="{Binding Locations}" SelectedItem="{Binding Location}" DisplayMemberPath="Label" AutomationProperties.AutomationId="OrderLocation"/></StackPanel>
+                        </Grid>
+                        <Grid IsEnabled="{Binding IsNew}"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="16"/><ColumnDefinition/></Grid.ColumnDefinitions>
+                            <StackPanel><TextBlock Text="Поступление" Style="{StaticResource Label}"/><TextBox Text="{Binding ReceivedAt, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.AutomationId="ReceivedAt"/></StackPanel>
+                            <StackPanel Grid.Column="2"><TextBlock Text="Хранение до" Style="{StaticResource Label}"/><TextBox Text="{Binding StorageUntil, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.AutomationId="StorageUntil"/></StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </Border>
+                <Grid Margin="0,20,0,12"><TextBlock Text="Позиции заказа" FontSize="18" FontWeight="SemiBold" VerticalAlignment="Center"/><StackPanel Orientation="Horizontal" HorizontalAlignment="Right"><Button Content="Добавить" Command="{Binding AddItemCommand}" Margin="0,0,8,0"/><Button Content="Убрать" Command="{Binding RemoveItemCommand}"/></StackPanel></Grid>
+                <DataGrid ItemsSource="{Binding Items}" SelectedItem="{Binding SelectedItem}" IsReadOnly="False" Height="170" AutomationProperties.AutomationId="OrderItems">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Название" Binding="{Binding Name, UpdateSourceTrigger=PropertyChanged}" Width="*"/>
+                        <DataGridTextColumn Header="Количество" Binding="{Binding Quantity, UpdateSourceTrigger=PropertyChanged}" Width="130"/>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <TextBlock Text="У заказа должна быть хотя бы одна позиция. Выдача и возврат выполняются для заказа целиком." Foreground="{StaticResource Muted}" FontSize="12" Margin="0,10,0,12"/>
+            </StackPanel>
+        </ScrollViewer>
+        <StackPanel Grid.Row="2" Margin="0,16,0,0">
+            <TextBlock Text="{Binding Message}" Foreground="#A33430" Margin="0,0,0,10" AutomationProperties.AutomationId="EditorMessage"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right"><Button Content="Отмена" IsCancel="True" Margin="0,0,10,0"/><Button Content="Сохранить заказ" Command="{Binding SaveCommand}" Style="{StaticResource PrimaryButton}" AutomationProperties.AutomationId="SaveOrder"/></StackPanel>
+        </StackPanel>
+    </Grid>
+</Window>
