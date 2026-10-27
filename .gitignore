@@ -1,0 +1,30 @@
+# Visual Studio and .NET build output
+.vs/
+**/bin/
+**/obj/
+TestResults/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Local databases, journals and backups; migrations remain tracked
+*.db
+*.db-*
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
+*.db.bak
+*.sqlite.bak
+
+# Local environment and credentials
+.env
+.env.*
+!.env.example
+
+# Local coursework handoff and agent working notes
+/AGENTS.md
+/START_HERE_CODEX.md
+/docs/
+/.local/
