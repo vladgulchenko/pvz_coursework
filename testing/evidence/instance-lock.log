@@ -1,0 +1,4 @@
+﻿PASS: Another process cannot acquire the same database lock
+PASS: Another database can be opened by a different process
+PASS: Database lock becomes available after its owner releases it
+Cross-process lock: PASS, 3 checks.

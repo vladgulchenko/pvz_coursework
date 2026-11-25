@@ -1,0 +1,8 @@
+﻿PASS: First process initializes an empty database
+PASS: Application process signs in using persisted credentials
+PASS: First process saves a complete lifecycle before closing
+PASS: Second process recognizes the existing administrator
+PASS: Application process signs in using persisted credentials
+PASS: Second process restores status, empty placement and four history records
+PASS: Second process restores the saved order items
+Process restart: PASS, 7 checks across two normal application launches.

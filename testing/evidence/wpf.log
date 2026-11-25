@@ -1,0 +1,29 @@
+﻿PASS: Empty database offers setup
+PASS: Initial setup requires subsequent sign-in
+PASS: Auth VM signs in
+PASS: Location VM creates and selects cell
+PASS: Saving a newly created selected location updates instead of duplicating it
+PASS: Employee VM creates and selects operator
+PASS: Saving a newly created selected employee updates without asking for another password
+PASS: Editor VM persists an order
+PASS: Existing order editor disables immutable number and dates
+PASS: Main VM computes counters and overdue marker
+PASS: Main search command updates the displayed order list
+PASS: Main combines search with status filter and clears an empty result card
+PASS: Selected card enables valid operations
+PASS: Orders grid is rendered
+PASS: Issue button binding is enabled
+PASS: Cancelled confirmation writes nothing
+PASS: Issue refreshes card and clears placement
+PASS: Issued card disables repeated issue
+PASS: Return VM requires new placement
+PASS: Full lifecycle has four history records
+PASS: Failed write reloads actual card from SQLite
+PASS: AsyncCommand blocks duplicate execution
+PASS: AsyncCommand unlocks after completion
+PASS: Logout clears session and cards
+PASS: Operator cannot invoke administrative commands
+PASS: Operator has no admin buttons
+PASS: Reinitialization preserves saved lifecycle
+PASS: No WPF binding errors:
+WPF smoke: PASS, 28 checks. Screenshots: D:\Studying\3_semester\SofrwareDesign\coursework\code\TestResults\20261125T092641Z-0e55b168\screenshots

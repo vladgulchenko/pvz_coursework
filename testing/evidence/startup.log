@@ -1,0 +1,7 @@
+﻿PASS: Production startup creates persistent SQLite database
+PASS: Production startup displays initial setup without default credentials
+PASS: Production setup creates administrator through Auth VM
+PASS: Production session event opens main screen
+PASS: Production logout closes protected windows and clears cards
+PASS: Existing administrator cannot be configured again
+Production startup/session: PASS, 6 checks; closing main window normally.
