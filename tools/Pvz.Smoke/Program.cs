@@ -18,17 +18,24 @@ using Pvz.Wpf.Views;
 namespace Pvz.Smoke;
 
 // Separate executable for UI verification. Production startup has no test login or bypass.
-internal static class Program
+internal static partial class Program
 {
-    private static readonly string Password = Convert.ToHexString(System.Security.Cryptography.RandomNumberGenerator.GetBytes(16));
+    private static readonly string Password = Environment.GetEnvironmentVariable("PVZ_SMOKE_PASSWORD")
+        ?? Convert.ToHexString(System.Security.Cryptography.RandomNumberGenerator.GetBytes(16));
     private static readonly string WorkFolder = Path.Combine(Path.GetTempPath(), "Pvz.Smoke", Guid.NewGuid().ToString("N"));
-    private static readonly string ArtifactFolder = Path.GetFullPath(Path.Combine("docs", "report", "screenshots"));
+    private static readonly string ArtifactFolder = Path.GetFullPath(
+        Environment.GetEnvironmentVariable("PVZ_TEST_ARTIFACTS") ?? Path.Combine("TestResults", "wpf", "screenshots"));
     private static readonly BindingErrorListener BindingErrors = new();
     private static int checks;
 
     [STAThread]
     private static int Main(string[] args)
     {
+        if (args.Length > 0 && args[0] is "--instance-lock" or "--lock-child" or "--restart" or "--restart-write" or "--restart-read")
+        {
+            try { return RunOperationalProbe(args); }
+            catch (Exception ex) { Console.Error.WriteLine(ex); return 1; }
+        }
         if (args.Contains("--startup")) return ProbeStartup();
         CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("ru-RU");
         CultureInfo.CurrentUICulture = CultureInfo.GetCultureInfo("ru-RU");
@@ -64,7 +71,8 @@ internal static class Program
 
     private static int ProbeStartup()
     {
-        var probeFolder = Path.GetFullPath(Path.Combine(".local", "startup-probe", Guid.NewGuid().ToString("N")));
+        var probeRoot = Path.Combine(Path.GetTempPath(), "Pvz.Smoke.Startup");
+        var probeFolder = Path.Combine(probeRoot, Guid.NewGuid().ToString("N"));
         var path = Path.Combine(probeFolder, "pvz.db");
         Environment.SetEnvironmentVariable("PVZ_DATABASE_PATH", path);
         var app = new Pvz.Wpf.App();
@@ -112,7 +120,7 @@ internal static class Program
         };
         timer.Start();
         var result = app.Run();
-        DeleteRunDirectory(probeFolder, Path.GetFullPath(Path.Combine(".local", "startup-probe")));
+        DeleteRunDirectory(probeFolder, probeRoot);
         return result;
     }
 
@@ -150,6 +158,8 @@ internal static class Program
         locations.Rack = "A"; locations.Cell = "01";
         await locations.SaveCommand.ExecuteAsync();
         Check(locations.Locations.Count == 1 && locations.Selected is not null, "Location VM creates and selects cell");
+        await locations.SaveCommand.ExecuteAsync();
+        Check(locations.Locations.Count == 1, "Saving a newly created selected location updates instead of duplicating it");
         await RenderAsync(locationsWindow, "locations.png");
         locationsWindow.Close();
         var location = (await admin.GetLocationsAsync()).Single();
@@ -161,6 +171,8 @@ internal static class Program
         employees.Name = "Демонстрационный оператор"; employees.Login = "demo-operator";
         await employees.SaveCommand.ExecuteAsync(Password);
         Check(employees.Employees.Count == 2 && employees.Selected is not null, "Employee VM creates and selects operator");
+        await employees.SaveCommand.ExecuteAsync();
+        Check(employees.Employees.Count == 2 && !employees.IsError, "Saving a newly created selected employee updates without asking for another password");
         await RenderAsync(employeesWindow, "employees.png");
         employeesWindow.Close();
 
@@ -180,6 +192,16 @@ internal static class Program
         editorWindow.Close();
         var id = (await orders.SearchAsync()).Single().Id;
 
+        var editVm = new OrderEditorViewModel(orders, [location], await orders.GetAsync(id));
+        var editWindow = new OrderEditorWindow { Owner = window, DataContext = editVm };
+        editWindow.Show();
+        await LayoutAsync(editWindow);
+        Check(FindByAutomationId(editWindow, "OrderNumber") is TextBox { IsEnabled: false }
+            && FindByAutomationId(editWindow, "ReceivedAt") is TextBox { IsEnabled: false }
+            && FindByAutomationId(editWindow, "StorageUntil") is TextBox { IsEnabled: false },
+            "Existing order editor disables immutable number and dates");
+        editWindow.Close();
+
         var now = DateTime.UtcNow;
         await orders.RegisterAsync(new("DEMO-EXPIRED", "Вымышленный Получатель", "+375000000001",
             now.AddDays(-4), now.AddDays(-1), location.Id, [new("Тестовый товар", 1)]));
@@ -188,6 +210,15 @@ internal static class Program
         shell.CurrentPage = main;
         await main.InitializeAsync();
         Check(main.TotalCount == 2 && main.OverdueCount == 1, "Main VM computes counters and overdue marker");
+        main.Search = "demo-001";
+        await main.RefreshCommand.ExecuteAsync();
+        Check(main.TotalCount == 1 && main.Orders[0].Id == id, "Main search command updates the displayed order list");
+        main.SelectedFilter = main.Filters.Single(x => x.Status == OrderStatus.Issued);
+        await main.RefreshCommand.ExecuteAsync();
+        Check(main.TotalCount == 0 && !main.HasDetails, "Main combines search with status filter and clears an empty result card");
+        main.Search = "";
+        main.SelectedFilter = main.Filters[0];
+        await main.RefreshCommand.ExecuteAsync();
         main.SelectedOrder = main.Orders.Single(x => x.Id == id);
         await WaitAsync(() => !main.IsBusy && main.HasDetails);
         Check(main.CanIssue && main.CanEdit, "Selected card enables valid operations");
@@ -218,7 +249,7 @@ internal static class Program
         main.ReturnReason = "Истек срок хранения";
         main.ReturnLocation = main.Locations.Single();
         await main.StartReturnCommand.ExecuteAsync();
-        Check(main.Message.Length > 0 && main.Details?.Summary.Status == OrderStatus.AwaitingPickup && main.Details.History.Count == 1,
+        Check(main.IsIdle && main.IsError && main.Message.Length > 0 && main.Details?.Summary.Status == OrderStatus.AwaitingPickup && main.Details.History.Count == 1,
             "Failed write reloads actual card from SQLite");
 
         var gate = new TaskCompletionSource();
